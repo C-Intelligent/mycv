@@ -6,5 +6,5 @@ CXX_DEFINES = -Dmycv_EXPORTS
 
 CXX_INCLUDES = @CMakeFiles/mycv.dir/includes_CXX.rsp
 
-CXX_FLAGS = -fvisibility=hidden
+CXX_FLAGS = -O3 -DNDEBUG -fvisibility=hidden
 
