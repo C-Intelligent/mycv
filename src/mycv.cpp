@@ -195,6 +195,7 @@ py::array_t<T> rgb_filter(py::array_t<T>& img_rgb, py::array_t<N>& filter) {
 
 #define _NOR_LINEAR      0
 #define _NOR_TRUMC       1
+#define _NOR_FACTOR      2
 template<typename T, typename N>
 py::array_t<T> rgb_nor_filter(py::array_t<T>& img_rgb, py::array_t<N>& filter, uint8_t nor_method) {
     py::buffer_info img_info = img_rgb.request(), fil_info = filter.request();
@@ -241,6 +242,11 @@ py::array_t<T> rgb_nor_filter(py::array_t<T>& img_rgb, py::array_t<N>& filter, u
     //
     T _max = ~0;
     float _factor = (_max + 0.0) / (max - min);
+    if (_NOR_FACTOR == nor_method) {
+        float sum = 0;
+        for (int i = 0; i < fil_info.shape[0] * fil_info.shape[1]; i++) sum += fil[i];
+        _factor = 1 / sum;
+    }
     
     for (int i = border_t; i < img_info.shape[0] - border_b; i++) {
         for (int j = border_l; j < img_info.shape[1] - border_r; j++) {
@@ -251,10 +257,20 @@ py::array_t<T> rgb_nor_filter(py::array_t<T>& img_rgb, py::array_t<N>& filter, u
                 ptr[idx + 1] = buf[idx + 0] > _max ? _max : (buf[idx + 1] < 0 ? 0 : buf[idx + 1]);
                 ptr[idx + 2] = buf[idx + 0] > _max ? _max : (buf[idx + 2] < 0 ? 0 : buf[idx + 2]);
             }
-            else {
+            else if (_NOR_FACTOR == nor_method) {
+                ptr[idx + 0] = _factor * buf[idx + 0];
+                ptr[idx + 1] = _factor * buf[idx + 1];
+                ptr[idx + 2] = _factor * buf[idx + 2];
+            }
+            else if (_NOR_LINEAR == nor_method) {
                 ptr[idx + 0] = _factor * (buf[idx + 0] - min);
                 ptr[idx + 1] = _factor * (buf[idx + 1] - min);
                 ptr[idx + 2] = _factor * (buf[idx + 2] - min);
+            }
+            else {
+                ptr[idx + 0] = buf[idx + 0];
+                ptr[idx + 1] = buf[idx + 1];
+                ptr[idx + 2] = buf[idx + 2];
             }
             
         }
@@ -321,7 +337,7 @@ PYBIND11_MODULE(mycv, m) {
     m.attr("version") = what;
     m.attr("num") = 123;
 
-    m.attr("nor_method_trunc") = _NOR_TRUMC;
+    m.attr("nor_method_trunc") = _NOR_TRUMC; 
     m.attr("nor_method_linear") = _NOR_LINEAR;
-
+    m.attr("nor_method_factor") = _NOR_FACTOR;
 }
