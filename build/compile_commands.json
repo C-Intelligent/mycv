@@ -1,7 +1,0 @@
-[
-{
-  "directory": "C:/Users/Cao intelligent/Desktop/imgpro/mycv/build",
-  "command": "\"D:\\Program Files\\MGW\\mingw64\\bin\\g++.exe\" -Dmycv_EXPORTS @CMakeFiles/mycv.dir/includes_CXX.rsp -O3 -DNDEBUG -fvisibility=hidden -o CMakeFiles\\mycv.dir\\src\\mycv.cpp.obj -c \"C:\\Users\\Cao intelligent\\Desktop\\imgpro\\mycv\\src\\mycv.cpp\"",
-  "file": "C:/Users/Cao intelligent/Desktop/imgpro/mycv/src/mycv.cpp"
-}
-]
